@@ -1,0 +1,11 @@
+0x0000000000400502 : adc cl, byte ptr [rbx] ; and byte ptr [rax], al ; push 0 ; jmp 0x4004f0
+
+0x0000000000400549 : add ah, dh ; nop dword ptr [rax + rax] ; ret
+
+0x000000000040054f : add bl, dh ; ret
+
+0x00000000004005e7 : add byte ptr [rcx], al ; pop rbp ; ret
+
+0x00000000004005e8 : add dword ptr [rbp - 0x3d], ebx ; nop dword ptr [rax + rax] ; ret
+
+0x00000000004005e7 : add byte ptr [rcx], al ; pop rbp ; ret

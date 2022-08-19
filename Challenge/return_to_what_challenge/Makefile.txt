@@ -1,0 +1,6 @@
+w_canary: return-to-what.o
+	gcc -o w_canary return-to-what.o
+return-to-what.o: return-to-what.c
+	gcc -c return-to-what.c -fstack-protector
+clean:
+rm *.o w_canary

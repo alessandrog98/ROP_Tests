@@ -1,0 +1,66 @@
+- dmesg : report errori precedenti esecuzioni
+
+- echo -e <string> | ./<nome_codice> : eseguire il codice con input <string> e -e per interpretare gli hex
+  python3 -c 'print("<what_to_print>")' | ./<nome_codice> : comando alternativo ad echo
+
+- rabin2 -z <binary> : comando per cercare stinghe nel binary
+
+- rabin2 -i <binary> : lista nome funzioni importate dalle librerie condivise nel binary 
+
+- rabin2 -qs <binary> | grep -ve imp -e ' 0 ' : lista funzioni scritte dal programmatore nel binary 
+
+- checksec <binary> : lista protezioni abilitate nel binary
+
+- readelf -a <binary> : info generali ELF + sezioni ELF con realtivi privilegi 
+
+ANALISI STATICA APPROFONDITA : 
+
+- r2 -AA <binary> : abilita la possibilità di analizzare staticamente il binary passato
+
+	una volta fatto il comando sopra :
+
+	- afl : analyze function list, ci mostra la lista delle funzioni usate dal binary
+	
+	- s <nome_funzione> : cerca la funzione all'interno del binary
+		
+		dopo aver cercato col comando sopra: 
+		
+		- pdf : print disassembly of function, stampa il dodice assembly della funzione cercata
+
+	- s <indirizzo> : cerca l'indirizzo nel binary
+		
+		- pd : print disassembly, stampa assembly che risiede all'indirizzo
+
+COMPILAZIONE CODICE CON LIBRERIA CONDIVISA:
+gcc -L /mnt/c/Users/lxgas/Desktop/unive/Tesi/Test/library -Wall -o vulnerable_code -fno-stack-protector -no-pie vulnerable_code.c -l :lib.so
+
+LINKING LIBRERIA CONDIVISA :
+
+sequenza : 
+	
+	creazione oggetto :
+	
+		-gcc -c -Wall -fpic my_lib.c
+		effettivo : gcc -c -Wall -fpic -fno-stack-protector my_lib.c
+		FULL RELRO : -Wl,-z,relro,-z,now
+
+	creazione libreria :
+	
+		-gcc -shared -o <new library name.so> <library name>.o
+		effettivo : gcc -shared -fpic -fno-stack-protector -o lib.so my_lib.o
+		
+	
+	linking :
+
+		-gcc -L <path to library's bin> -Wall -o <new .exe name> <code name.c> -l :<library name.so>
+		(-gcc -shared -Wl,-z,relro,-z,now -o lib.so my_lib.o) RELRO FULL
+		effettivo : gcc -L /mnt/c/Users/lxgas/Desktop/unive/Tesi/Test/library -Wall -o vulnerable_code -fno-stack-protector -fcf-protection=none -no-pie vulnerable_code.c -l :lib.so
+		con canary : gcc -L /mnt/c/Users/lxgas/Desktop/unive/Tesi/Test/library/canary -Wall -o vulnerable_code -no-pie vulnerable_code.c -l :lib.so
+		
+		-LD_LIBRARY_PATH=<path to library's bin>:$LD_LIBRARY_PATH				(path è lo stesso del comando subito sopra)
+		effettivo : LD_LIBRARY_PATH=/mnt/c/Users/lxgas/Desktop/unive/Tesi/Test/library:$LD_LIBRARY_PATH
+		con canary : LD_LIBRARY_PATH=/mnt/c/Users/lxgas/Desktop/unive/Tesi/Test/library/canary:$LD_LIBRARY_PATH
+
+		-export LD_LIBRARY_PATH=<path to library's bin>:$LD_LIBRARY_PATH			(path è lo stesso del comando subito sopra)
+		effettivo : export LD_LIBRARY_PATH=/mnt/c/Users/lxgas/Desktop/unive/Tesi/Test/library:$LD_LIBRARY_PATH
+		con canary : export LD_LIBRARY_PATH=/mnt/c/Users/lxgas/Desktop/unive/Tesi/Test/library/canary:$LD_LIBRARY_PATH

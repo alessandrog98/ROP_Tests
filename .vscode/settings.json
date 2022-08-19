@@ -1,0 +1,8 @@
+{
+    "files.associations": {
+        "*.rmd": "markdown",
+        "*.Rmd": "rmd",
+        "sstream": "c",
+        "random": "c"
+    }
+}

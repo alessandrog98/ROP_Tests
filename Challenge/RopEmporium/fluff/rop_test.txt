@@ -1,0 +1,27 @@
+"flag.txt"
+
+
+4006a3 : pop rdi ; ret
+
+
+
+rdx = 1524 -> 0x180f
+
+rcx = f0000 -> 0x660000
+
+
+
+
+
+400639 : stosb byte ptr [rdi], al ; ret
+
+
+
+
+pop rdx; pop rcx; add rcx, 0x3ef2; bextr rbx, rcx, rdx; ret;
+
+8
+
+
+
+MOV AL,[BX+AL]
